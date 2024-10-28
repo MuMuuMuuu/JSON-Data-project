@@ -1,0 +1,5 @@
+
+*.xml
+*.iml
+.ipynb_checkpoints/Data_Interpretation-checkpoint.ipynb
+.DS_Store
