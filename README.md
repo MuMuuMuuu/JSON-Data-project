@@ -9,4 +9,4 @@ This project offers a hands-on tool for exploring and analyzing restaurant healt
 
 - **`Data_Interpretation.ipynb`**: A Jupyter notebook for visualizing data insights, helping users explore trends in health scores, compliance levels across cuisines, and the geographical distribution of restaurants across New York City’s boroughs.
 
-The `Data_Interpretation.pdf` report serves as a reference, presenting visualization conclusions along with code snippets that demonstrate API usage, offering clear insights into the analysis process and results achieved.
+The `Data_Interpretation.pdf` report serves as a reference, presenting visualization conclusions along with code snippets that demonstrate API usage, offering insights into the analysis process and results achieved.
