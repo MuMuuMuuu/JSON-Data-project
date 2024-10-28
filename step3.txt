@@ -1,0 +1,1568 @@
+1. Find all restaurants in the 'Brooklyn' borough.
+
+a) **Question:** What are all the restaurants located in Brooklyn?
+
+b) **Query:**
+```
+db.restaurants.find({ borough: 'Brooklyn' })
+```
+
+c) **Output:** This query returns all documents where the `borough` field equals 'Brooklyn'. You would see the detailed documents for each matching restaurant.
+
+```
+[
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5961'),
+    address: {
+      building: '469',
+      coord: [ -73.961704, 40.662942 ],
+      street: 'Flatbush Avenue',
+      zipcode: '11225'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'Hamburgers',
+    grades: [
+      {
+        date: { '$date': Long('1419897600000') },
+        grade: 'A',
+        score: 8
+      },
+      {
+        date: { '$date': Long('1404172800000') },
+        grade: 'B',
+        score: 23
+      },
+      {
+        date: { '$date': Long('1367280000000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1336435200000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: "Wendy'S",
+    restaurant_id: '30112340'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5963'),
+    address: {
+      building: '2780',
+      coord: [ -73.98241999999999, 40.579505 ],
+      street: 'Stillwell Avenue',
+      zipcode: '11224'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'American',
+    grades: [
+      {
+        date: { '$date': Long('1402358400000') },
+        grade: 'A',
+        score: 5
+      },
+      {
+        date: { '$date': Long('1370390400000') },
+        grade: 'A',
+        score: 7
+      },
+      {
+        date: { '$date': Long('1334275200000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1318377600000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: 'Riviera Caterer',
+    restaurant_id: '40356018'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5967'),
+    address: {
+      building: '7114',
+      coord: [ -73.9068506, 40.6199034 ],
+      street: 'Avenue U',
+      zipcode: '11234'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'Delicatessen',
+    grades: [
+      {
+        date: { '$date': Long('1401321600000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1389657600000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1375488000000') },
+        grade: 'A',
+        score: 8
+      },
+      {
+        date: { '$date': Long('1342569600000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1331251200000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1318550400000') },
+        grade: 'A',
+        score: 9
+      }
+    ],
+    name: "Wilken'S Fine Food",
+    restaurant_id: '40356483'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5968'),
+    address: {
+      building: '6409',
+      coord: [ -74.00528899999999, 40.628886 ],
+      street: '11 Avenue',
+      zipcode: '11219'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'American',
+    grades: [
+      {
+        date: { '$date': Long('1405641600000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1375142400000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1360713600000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1345075200000') },
+        grade: 'A',
+        score: 2
+      },
+      {
+        date: { '$date': Long('1313539200000') },
+        grade: 'A',
+        score: 11
+      }
+    ],
+    name: 'Regina Caterers',
+    restaurant_id: '40356649'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5969'),
+    address: {
+      building: '1839',
+      coord: [ -73.9482609, 40.6408271 ],
+      street: 'Nostrand Avenue',
+      zipcode: '11226'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'Ice Cream, Gelato, Yogurt, Ices',
+    grades: [
+      {
+        date: { '$date': Long('1405296000000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1373414400000') },
+        grade: 'A',
+        score: 8
+      },
+      {
+        date: { '$date': Long('1341964800000') },
+        grade: 'A',
+        score: 5
+      },
+      {
+        date: { '$date': Long('1329955200000') },
+        grade: 'A',
+        score: 8
+      }
+    ],
+    name: 'Taste The Tropics Ice Cream',
+    restaurant_id: '40356731'
+  }
+]
+```
+
+
+2. Find the top 5 restaurants with the highest score in their latest grade.
+
+
+a) **Question:** Which are the top 5 restaurants with the highest score in their most recent grading?
+
+b) **Query:**
+```
+db.restaurants.aggregate([
+  { $addFields: { latestGrade: { $arrayElemAt: [ "$grades", -1 ] } } },
+  { $sort: { "latestGrade.score": -1 } },
+  { $limit: 5 }
+])
+```
+
+c) **Output:** This aggregation pipeline adds a field for the latest grade, sorts the documents by the latest grade's score in descending order, and limits the results to the top 5.
+
+
+[
+  {
+    _id: ObjectId('65d3c7e9d70c84999aad8ce9'),
+    address: {
+      building: '1724',
+      coord: [ -73.94981, 40.780043 ],
+      street: '2 Avenue',
+      zipcode: '10128'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Indian',
+    grades: [
+      {
+        date: { '$date': Long('1411603200000') },
+        grade: 'A',
+        score: 7
+      },
+      {
+        date: { '$date': Long('1395273600000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1378684800000') },
+        grade: 'B',
+        score: 21
+      },
+      {
+        date: { '$date': Long('1364169600000') },
+        grade: 'B',
+        score: 18
+      },
+      {
+        date: { '$date': Long('1344988800000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1324598400000') },
+        grade: 'C',
+        score: 98
+      }
+    ],
+    name: "Baluchi'S Indian Food",
+    restaurant_id: '41569277',
+    latestGrade: { date: { '$date': Long('1324598400000') }, grade: 'C', score: 98 }
+  },
+  {
+    _id: ObjectId('65d3c7ead70c84999aadb549'),
+    address: {
+      building: '1898',
+      coord: [ -73.910439, 40.8499696 ],
+      street: 'Jerome Avenue',
+      zipcode: '10453'
+    },
+    borough: 'Bronx',
+    cuisine: 'Latin (Cuban, Dominican, Puerto Rican, South & Central American)',
+    grades: [
+      {
+        date: { '$date': Long('1420502400000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1412640000000') },
+        grade: 'C',
+        score: 82
+      }
+    ],
+    name: 'La Potencia Restaurant',
+    restaurant_id: '50014192',
+    latestGrade: { date: { '$date': Long('1412640000000') }, grade: 'C', score: 82 }
+  },
+  {
+    _id: ObjectId('65d3c7e9d70c84999aad8023'),
+    address: {
+      building: '222',
+      coord: [ -73.9579033, 40.7332745 ],
+      street: 'Franklin Street',
+      zipcode: '11222'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'Italian',
+    grades: [
+      {
+        date: { '$date': Long('1418256000000') },
+        grade: 'Z',
+        score: 18
+      },
+      {
+        date: { '$date': Long('1383177600000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1363737600000') },
+        grade: 'B',
+        score: 24
+      },
+      {
+        date: { '$date': Long('1342569600000') },
+        grade: 'B',
+        score: 18
+      },
+      {
+        date: { '$date': Long('1326326400000') },
+        grade: 'C',
+        score: 81
+      }
+    ],
+    name: 'Anella',
+    restaurant_id: '41410058',
+    latestGrade: { date: { '$date': Long('1326326400000') }, grade: 'C', score: 81 }
+  },
+  {
+    _id: ObjectId('65d3c7e8d70c84999aad63ba'),
+    address: {
+      building: '243',
+      coord: [ -73.9889479, 40.7568894 ],
+      street: 'West   42 Street',
+      zipcode: '10036'
+    },
+    borough: 'Manhattan',
+    cuisine: 'American',
+    grades: [
+      {
+        date: { '$date': Long('1414713600000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1400198400000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1384819200000') },
+        grade: 'A',
+        score: 5
+      },
+      {
+        date: { '$date': Long('1364169600000') },
+        grade: 'B',
+        score: 19
+      },
+      {
+        date: { '$date': Long('1346803200000') },
+        grade: 'B',
+        score: 26
+      },
+      {
+        date: { '$date': Long('1334016000000') },
+        grade: 'C',
+        score: 49
+      },
+      {
+        date: { '$date': Long('1321833600000') },
+        grade: 'C',
+        score: 80
+      }
+    ],
+    name: 'B.B. Kings',
+    restaurant_id: '40704853',
+    latestGrade: { date: { '$date': Long('1321833600000') }, grade: 'C', score: 80 }
+  },
+  {
+    _id: ObjectId('65d3c7e9d70c84999aad8f6f'),
+    address: {
+      building: '844',
+      coord: [ -73.970671, 40.7515735 ],
+      street: '2 Avenue',
+      zipcode: '10017'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Pizza',
+    grades: [
+      {
+        date: { '$date': Long('1405382400000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1373846400000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1361232000000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1343865600000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1330473600000') },
+        grade: 'B',
+        score: 14
+      },
+      {
+        date: { '$date': Long('1314921600000') },
+        grade: 'C',
+        score: 79
+      }
+    ],
+    name: 'La Trattoria',
+    restaurant_id: '41595287',
+    latestGrade: { date: { '$date': Long('1314921600000') }, grade: 'C', score: 79 }
+  }
+]
+
+
+
+3. Count the number of restaurants in each borough.
+
+a) **Question:** How many restaurants are there in each borough?
+
+b) **Query:**
+```
+db.restaurants.aggregate([
+  { $group: { _id: "$borough", count: { $sum: 1 } } }
+])
+```
+
+c) **Output:** This aggregation groups the documents by the `borough` field and counts the number of restaurants in each group.
+
+
+[
+  { _id: 'Bronx', count: 2338 },
+  { _id: 'Queens', count: 5656 },
+  { _id: 'Brooklyn', count: 6086 },
+  { _id: 'Missing', count: 51 },
+  { _id: 'Manhattan', count: 10259 },
+  { _id: 'Staten Island', count: 969 }
+]
+
+
+4. Find restaurants within a specific geographical area.
+
+
+
+a) **Question:** Which restaurants are located within a specific geographical area?
+
+b) **Query:**
+```
+db.restaurants.find({
+  "address.coord": { 
+    $geoWithin: { 
+      $geometry: { 
+        type: "Polygon", 
+        coordinates: [[[ -74, 40.73 ], [ -73.96, 40.73 ], [ -73.96, 40.75 ], [ -74, 40.75 ], [ -74, 40.73 ]]]
+      } 
+    } 
+  }
+})
+```
+
+
+c) **Output:** This query returns restaurants located within the specified polygon coordinates.
+
+
+[
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5975'),
+    address: {
+      building: '759',
+      coord: [ -73.9925306, 40.7309346 ],
+      street: 'Broadway',
+      zipcode: '10003'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Delicatessen',
+    grades: [
+      {
+        date: { '$date': Long('1390262400000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1357257600000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1339027200000') },
+        grade: 'A',
+        score: 6
+      },
+      {
+        date: { '$date': Long('1326758400000') },
+        grade: 'A',
+        score: 8
+      }
+    ],
+    name: "Bully'S Deli",
+    restaurant_id: '40361708'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad598b'),
+    address: {
+      building: '464',
+      coord: [ -73.9791458, 40.744328 ],
+      street: '3 Avenue',
+      zipcode: '10016'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Pizza',
+    grades: [
+      {
+        date: { '$date': Long('1407196800000') },
+        grade: 'A',
+        score: 3
+      },
+      {
+        date: { '$date': Long('1394064000000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1373328000000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1359504000000') },
+        grade: 'A',
+        score: 4
+      },
+      {
+        date: { '$date': Long('1325721600000') },
+        grade: 'A',
+        score: 2
+      },
+      {
+        date: { '$date': Long('1316995200000') },
+        grade: 'A',
+        score: 0
+      }
+    ],
+    name: "Domino'S Pizza",
+    restaurant_id: '40363644'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad599f'),
+    address: {
+      building: '45',
+      coord: [ -73.9891878, 40.7375638 ],
+      street: 'East   18 Street',
+      zipcode: '10003'
+    },
+    borough: 'Manhattan',
+    cuisine: 'American',
+    grades: [
+      {
+        date: { '$date': Long('1412726400000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1381363200000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1366761600000') },
+        grade: 'C',
+        score: 36
+      },
+      {
+        date: { '$date': Long('1326067200000') },
+        grade: 'A',
+        score: 9
+      }
+    ],
+    name: 'Old Town Bar & Restaurant',
+    restaurant_id: '40364389'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad59ac'),
+    address: {
+      building: '251',
+      coord: [ -73.9775552, 40.7432016 ],
+      street: 'East   31 Street',
+      zipcode: '10016'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Italian',
+    grades: [
+      {
+        date: { '$date': Long('1398124800000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1371600000000') },
+        grade: 'C',
+        score: 32
+      },
+      {
+        date: { '$date': Long('1337644800000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: 'Marchis Restaurant',
+    restaurant_id: '40364668'
+  },
+  {
+    _id: ObjectId('65d3c7e8d70c84999aad59cb'),
+    address: {
+      building: '113',
+      coord: [ -73.9979214, 40.7371344 ],
+      street: 'West   13 Street',
+      zipcode: '10011'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Spanish',
+    grades: [
+      {
+        date: { '$date': Long('1406246400000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1395878400000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1358121600000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1325116800000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1312329600000') },
+        grade: 'A',
+        score: 13
+      }
+    ],
+    name: 'Spain Restaurant & Bar',
+    restaurant_id: '40365472'
+  }
+]
+
+
+
+5. Find restaurants offering 'Italian' cuisine and sort by name.
+
+a) **Question:** What are the Italian cuisine restaurants sorted by their name?
+
+b) **Query:**
+```
+db.restaurants.find({ cuisine: 'Italian' }).sort({ name: 1 })
+```
+
+c) **Output:** This query finds restaurants offering Italian cuisine and sorts the results alphabetically by the restaurant's name.
+
+
+
+[
+  {
+    _id: ObjectId('65d3c7e8d70c84999aad65f0'),
+    address: {
+      building: '129',
+      coord: [ -73.962943, 40.685007 ],
+      street: 'Gates Avenue',
+      zipcode: '11238'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'Italian',
+    grades: [
+      {
+        date: { '$date': Long('1394064000000') },
+        grade: 'A',
+        score: 5
+      },
+      {
+        date: { '$date': Long('1377734400000') },
+        grade: 'A',
+        score: 2
+      },
+      {
+        date: { '$date': Long('1362700800000') },
+        grade: 'A',
+        score: 7
+      },
+      {
+        date: { '$date': Long('1340755200000') },
+        grade: 'A',
+        score: 7
+      },
+      {
+        date: { '$date': Long('1321488000000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: '(Lewis Drug Store) Locanda Vini E Olii',
+    restaurant_id: '40804423'
+  },
+  {
+    _id: ObjectId('65d3c7e8d70c84999aad6073'),
+    address: {
+      building: '10018',
+      coord: [ -74.0343092, 40.6125569 ],
+      street: '4 Avenue',
+      zipcode: '11209'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'Italian',
+    grades: [
+      {
+        date: { '$date': Long('1417392000000') },
+        grade: 'A',
+        score: 5
+      },
+      {
+        date: { '$date': Long('1385683200000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1370217600000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1338854400000') },
+        grade: 'B',
+        score: 15
+      },
+      {
+        date: { '$date': Long('1326153600000') },
+        grade: 'A',
+        score: 10
+      }
+    ],
+    name: '101 Restaurant And Bar',
+    restaurant_id: '40560108'
+  },
+  {
+    _id: ObjectId('65d3c7e8d70c84999aad6395'),
+    address: {
+      building: '621',
+      coord: [ -73.992069, 40.759761 ],
+      street: '9 Avenue',
+      zipcode: '10036'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Italian',
+    grades: [
+      {
+        date: { '$date': Long('1398816000000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1384819200000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1362355200000') },
+        grade: 'B',
+        score: 19
+      },
+      {
+        date: { '$date': Long('1342828800000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1321228800000') },
+        grade: 'B',
+        score: 16
+      }
+    ],
+    name: '44 Sw Ristorante & Bar',
+    restaurant_id: '40698807'
+  },
+  {
+    _id: ObjectId('65d3c7e9d70c84999aad9f21'),
+    address: {
+      building: '900',
+      coord: [ -73.85901199999999, 40.846573 ],
+      street: 'Morris Park Avenue',
+      zipcode: '10462'
+    },
+    borough: 'Bronx',
+    cuisine: 'Italian',
+    grades: [
+      {
+        date: { '$date': Long('1410220800000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1385683200000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1363564800000') },
+        grade: 'A',
+        score: 13
+      }
+    ],
+    name: '900 Park',
+    restaurant_id: '41707964'
+  },
+  {
+    _id: ObjectId('65d3c7e9d70c84999aad81de'),
+    address: {
+      building: '10',
+      coord: [ -73.9827037, 40.7684141 ],
+      street: 'Columbus Circle',
+      zipcode: '10019'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Italian',
+    grades: [
+      {
+        date: { '$date': Long('1412812800000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1399334400000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1378252800000') },
+        grade: 'B',
+        score: 24
+      },
+      {
+        date: { '$date': Long('1363824000000') },
+        grade: 'A',
+        score: 7
+      },
+      {
+        date: { '$date': Long('1327968000000') },
+        grade: 'A',
+        score: 6
+      }
+    ],
+    name: 'A Voce',
+    restaurant_id: '41434084'
+  }
+]
+
+
+
+
+6. Find restaurants with a score less than 10 in their latest inspection.
+
+a) **Question:** Which restaurants had a score less than 10 in their most recent inspection?
+
+
+b) **Query:**
+```
+db.restaurants.find({ "grades.0.score": { $lt: 10 } })
+```
+
+
+c) **Output:** 
+
+This query filters documents where the first element of the grades array (representing the most recent inspection) has a score less than 10:
+
+
+
+[
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5960'),
+    address: {
+      building: '1007',
+      coord: [ -73.856077, 40.848447 ],
+      street: 'Morris Park Ave',
+      zipcode: '10462'
+    },
+    borough: 'Bronx',
+    cuisine: 'Bakery',
+    grades: [
+      {
+        date: { '$date': Long('1393804800000') },
+        grade: 'A',
+        score: 2
+      },
+      {
+        date: { '$date': Long('1378857600000') },
+        grade: 'A',
+        score: 6
+      },
+      {
+        date: { '$date': Long('1358985600000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1322006400000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1299715200000') },
+        grade: 'B',
+        score: 14
+      }
+    ],
+    name: 'Morris Park Bake Shop',
+    restaurant_id: '30075445'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5961'),
+    address: {
+      building: '469',
+      coord: [ -73.961704, 40.662942 ],
+      street: 'Flatbush Avenue',
+      zipcode: '11225'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'Hamburgers',
+    grades: [
+      {
+        date: { '$date': Long('1419897600000') },
+        grade: 'A',
+        score: 8
+      },
+      {
+        date: { '$date': Long('1404172800000') },
+        grade: 'B',
+        score: 23
+      },
+      {
+        date: { '$date': Long('1367280000000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1336435200000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: "Wendy'S",
+    restaurant_id: '30112340'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5962'),
+    address: {
+      building: '351',
+      coord: [ -73.98513559999999, 40.7676919 ],
+      street: 'West   57 Street',
+      zipcode: '10019'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Irish',
+    grades: [
+      {
+        date: { '$date': Long('1409961600000') },
+        grade: 'A',
+        score: 2
+      },
+      {
+        date: { '$date': Long('1374451200000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1343692800000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1325116800000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: 'Dj Reynolds Pub And Restaurant',
+    restaurant_id: '30191841'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5963'),
+    address: {
+      building: '2780',
+      coord: [ -73.98241999999999, 40.579505 ],
+      street: 'Stillwell Avenue',
+      zipcode: '11224'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'American',
+    grades: [
+      {
+        date: { '$date': Long('1402358400000') },
+        grade: 'A',
+        score: 5
+      },
+      {
+        date: { '$date': Long('1370390400000') },
+        grade: 'A',
+        score: 7
+      },
+      {
+        date: { '$date': Long('1334275200000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1318377600000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: 'Riviera Caterer',
+    restaurant_id: '40356018'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5966'),
+    address: {
+      building: '2206',
+      coord: [ -74.1377286, 40.6119572 ],
+      street: 'Victory Boulevard',
+      zipcode: '10314'
+    },
+    borough: 'Staten Island',
+    cuisine: 'Jewish/Kosher',
+    grades: [
+      {
+        date: { '$date': Long('1412553600000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1400544000000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1365033600000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1327363200000') },
+        grade: 'A',
+        score: 9
+      }
+    ],
+    name: 'Kosher Island',
+    restaurant_id: '40356442'
+  }
+]
+
+
+
+
+7. Count the number of restaurants with a 'score' greater than 20 in any of their inspections.
+
+
+
+
+a) **Question:** How many restaurants have received a score greater than 20 in any of their health inspections?
+
+
+b) **Query:**
+
+```
+db.restaurants.count({ "grades.score": { $gt: 20 } })
+```
+
+
+c) **output:**  6332 
+
+The query is used to count the number of documents in the restaurants collection where the score field inside the grades array has a value greater than 20.
+
+
+
+
+
+8. Find the average score of restaurants by cuisine.
+
+a) **Question:** What is the average score of restaurants grouped by cuisine?
+
+b) **Query:**
+```
+db.restaurants.aggregate([
+  { $unwind: "$grades" },
+  { $group: { _id: "$cuisine", averageScore: { $avg: "$grades.score" } } }
+])
+```
+
+c) **Output:** 
+
+
+The query calculates the average scores of restaurant inspections across different cuisines
+
+
+[
+  { _id: 'Bakery', averageScore: 11.389488339714584 },
+  { _id: 'Salads', averageScore: 8.96774193548387 },
+  { _id: 'Portuguese', averageScore: 11.82857142857143 },
+  {
+    _id: 'Bottled beverages, including water, sodas, juices, etc.',
+    averageScore: 10.336244541484715
+  },
+  { _id: 'Fruits/Vegetables', averageScore: 9.05 },
+  { _id: 'Turkish', averageScore: 11.823076923076924 },
+  { _id: 'Pizza/Italian', averageScore: 11.9488 },
+  { _id: 'Caribbean', averageScore: 12.172664624808576 },
+  { _id: 'CafÃ©/Coffee/Tea', averageScore: 10.142857142857142 },
+  { _id: 'Chinese/Japanese', averageScore: 14.866666666666667 }
+]
+
+
+
+
+9. List restaurants that have never received a grade below 'A'.
+
+a) **Question:** Which restaurants have never received a grade below 'A'?
+
+b) **Query:**
+```
+db.restaurants.find({ "grades.grade": { $nin: ['B', 'C', 'D', 'E', 'F'] } })
+```
+
+c) **Output:** 
+
+The query retrieves documents from the restaurants collection where the grade field within the grades array does not contain any of the values 'B', 'C', 'D', 'E', or 'F'.
+
+[
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5962'),
+    address: {
+      building: '351',
+      coord: [ -73.98513559999999, 40.7676919 ],
+      street: 'West   57 Street',
+      zipcode: '10019'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Irish',
+    grades: [
+      {
+        date: { '$date': Long('1409961600000') },
+        grade: 'A',
+        score: 2
+      },
+      {
+        date: { '$date': Long('1374451200000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1343692800000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1325116800000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: 'Dj Reynolds Pub And Restaurant',
+    restaurant_id: '30191841'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5963'),
+    address: {
+      building: '2780',
+      coord: [ -73.98241999999999, 40.579505 ],
+      street: 'Stillwell Avenue',
+      zipcode: '11224'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'American',
+    grades: [
+      {
+        date: { '$date': Long('1402358400000') },
+        grade: 'A',
+        score: 5
+      },
+      {
+        date: { '$date': Long('1370390400000') },
+        grade: 'A',
+        score: 7
+      },
+      {
+        date: { '$date': Long('1334275200000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1318377600000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: 'Riviera Caterer',
+    restaurant_id: '40356018'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5965'),
+    address: {
+      building: '8825',
+      coord: [ -73.8803827, 40.7643124 ],
+      street: 'Astoria Boulevard',
+      zipcode: '11369'
+    },
+    borough: 'Queens',
+    cuisine: 'American',
+    grades: [
+      {
+        date: { '$date': Long('1416009600000') },
+        grade: 'Z',
+        score: 38
+      },
+      {
+        date: { '$date': Long('1398988800000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1362182400000') },
+        grade: 'A',
+        score: 7
+      },
+      {
+        date: { '$date': Long('1328832000000') },
+        grade: 'A',
+        score: 13
+      }
+    ],
+    name: 'Brunos On The Boulevard',
+    restaurant_id: '40356151'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5966'),
+    address: {
+      building: '2206',
+      coord: [ -74.1377286, 40.6119572 ],
+      street: 'Victory Boulevard',
+      zipcode: '10314'
+    },
+    borough: 'Staten Island',
+    cuisine: 'Jewish/Kosher',
+    grades: [
+      {
+        date: { '$date': Long('1412553600000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1400544000000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1365033600000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1327363200000') },
+        grade: 'A',
+        score: 9
+      }
+    ],
+    name: 'Kosher Island',
+    restaurant_id: '40356442'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5967'),
+    address: {
+      building: '7114',
+      coord: [ -73.9068506, 40.6199034 ],
+      street: 'Avenue U',
+      zipcode: '11234'
+    },
+    borough: 'Brooklyn',
+    cuisine: 'Delicatessen',
+    grades: [
+      {
+        date: { '$date': Long('1401321600000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1389657600000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1375488000000') },
+        grade: 'A',
+        score: 8
+      },
+      {
+        date: { '$date': Long('1342569600000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1331251200000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1318550400000') },
+        grade: 'A',
+        score: 9
+      }
+    ],
+    name: "Wilken'S Fine Food",
+    restaurant_id: '40356483'
+  }
+]
+
+
+
+
+10. List restaurants in 'Manhattan' with at least one grade of 'C'.
+
+
+a) **Question:** Which restaurants located in Manhattan have received at least one 'C' grade from their inspections?
+
+
+b) **Query:**
+
+```
+db.restaurants.find({ borough: "Manhattan", "grades.grade": "C" })
+```
+
+c) **Output:**
+
+The query retrieves documents from the `restaurants` collection where the `borough` is "Manhattan" and at least one of the entries in the `grades` array has a `grade` of "C".
+
+[
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad5997'),
+    address: {
+      building: '94',
+      coord: [ -74.0061936, 40.7092038 ],
+      street: 'Fulton Street',
+      zipcode: '10038'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Chicken',
+    grades: [
+      {
+        date: { '$date': Long('1420502400000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1405382400000') },
+        grade: 'C',
+        score: 48
+      },
+      {
+        date: { '$date': Long('1367452800000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1348444800000') },
+        grade: 'A',
+        score: 8
+      },
+      {
+        date: { '$date': Long('1334793600000') },
+        grade: 'A',
+        score: 7
+      }
+    ],
+    name: 'Texas Rotisserie',
+    restaurant_id: '40364304'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad599f'),
+    address: {
+      building: '45',
+      coord: [ -73.9891878, 40.7375638 ],
+      street: 'East   18 Street',
+      zipcode: '10003'
+    },
+    borough: 'Manhattan',
+    cuisine: 'American',
+    grades: [
+      {
+        date: { '$date': Long('1412726400000') },
+        grade: 'A',
+        score: 10
+      },
+      {
+        date: { '$date': Long('1381363200000') },
+        grade: 'A',
+        score: 9
+      },
+      {
+        date: { '$date': Long('1366761600000') },
+        grade: 'C',
+        score: 36
+      },
+      {
+        date: { '$date': Long('1326067200000') },
+        grade: 'A',
+        score: 9
+      }
+    ],
+    name: 'Old Town Bar & Restaurant',
+    restaurant_id: '40364389'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad59a4'),
+    address: {
+      building: '180',
+      coord: [ -73.9788694, 40.7665961 ],
+      street: 'Central Park South',
+      zipcode: '10019'
+    },
+    borough: 'Manhattan',
+    cuisine: 'American',
+    grades: [
+      {
+        date: { '$date': Long('1418601600000') },
+        grade: 'A',
+        score: 12
+      },
+      {
+        date: { '$date': Long('1407369600000') },
+        grade: 'C',
+        score: 40
+      },
+      {
+        date: { '$date': Long('1375056000000') },
+        grade: 'A',
+        score: 2
+      },
+      {
+        date: { '$date': Long('1355356800000') },
+        grade: 'A',
+        score: 11
+      },
+      {
+        date: { '$date': Long('1343606400000') },
+        grade: 'C',
+        score: 4
+      },
+      {
+        date: { '$date': Long('1329350400000') },
+        grade: 'A',
+        score: 2
+      }
+    ],
+    name: 'Nyac Main Dining Room',
+    restaurant_id: '40364467'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad59a9'),
+    address: {
+      building: '311',
+      coord: [ -73.98621899999999, 40.763406 ],
+      street: 'West   51 Street',
+      zipcode: '10019'
+    },
+    borough: 'Manhattan',
+    cuisine: 'French',
+    grades: [
+      {
+        date: { '$date': Long('1415577600000') },
+        grade: 'B',
+        score: 15
+      },
+      {
+        date: { '$date': Long('1396483200000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1374019200000') },
+        grade: 'C',
+        score: 36
+      },
+      {
+        date: { '$date': Long('1360108800000') },
+        grade: 'B',
+        score: 22
+      },
+      {
+        date: { '$date': Long('1342396800000') },
+        grade: 'C',
+        score: 36
+      },
+      {
+        date: { '$date': Long('1331164800000') },
+        grade: 'C',
+        score: 7
+      }
+    ],
+    name: 'Tout Va Bien',
+    restaurant_id: '40364576'
+  },
+  {
+    _id: ObjectId('65d3c7e7d70c84999aad59ac'),
+    address: {
+      building: '251',
+      coord: [ -73.9775552, 40.7432016 ],
+      street: 'East   31 Street',
+      zipcode: '10016'
+    },
+    borough: 'Manhattan',
+    cuisine: 'Italian',
+    grades: [
+      {
+        date: { '$date': Long('1398124800000') },
+        grade: 'A',
+        score: 13
+      },
+      {
+        date: { '$date': Long('1371600000000') },
+        grade: 'C',
+        score: 32
+      },
+      {
+        date: { '$date': Long('1337644800000') },
+        grade: 'A',
+        score: 12
+      }
+    ],
+    name: 'Marchis Restaurant',
+    restaurant_id: '40364668'
+  }
+]
+
+
